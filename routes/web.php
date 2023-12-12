@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,4 +34,7 @@ Route::prefix('course')->group(function () {
     Route::get('/{id}')->name('course.show');
 });
 
-Route::view('/dashboard', 'pages.dashboard.lecturer')->name('dashboard');
+Route::view('/dashboard', 'pages.dashboard.lecturer')->name('dashboard')->middleware('api.auth');
+
+Route::view('login', 'pages.user.login')->name('auth.login');
+Route::post('login', [AuthController::class, 'login'])->name('auth.login-action');

@@ -17,37 +17,21 @@ class APIAuth
      */
     public function handle(Request $request, Closure $next)
     {
-        // kalo di session website kamu udah ada token
-        if (session('access_token') != null) {
-            // cek token sama yang ada di api
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . session('access_token'),
-            ])->get('http://localhost:7777/api/auth/user-profile');
-            
-            // kalo tokennya masih valid, statusnya 200
-            if ($response->status() == 200){
-                return $next($request);
-            }
+        // if (session('access_token') == null)
+        if (!$request->session()->has('token'))
+            return to_route('auth.login');
+        // $token = session('access_token');
+        $token = $request->session()->get('token');
 
-            // kalo udah ngga valid ya sessionnya dihapus redirect ke login
-            else {
-                $request->session()->flush();
-                return redirect('login'); //redirect()->away('url ke login gwa')
-            }
-        } 
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+        ])->get('http://localhost:8080/api/auth/validate');
 
-        // kalo sessionnya baru aja dikirim dari portal
-        else if ($request->has('access_token')) {
-            // hapus session yang lama kalo ada
+        if ($response->status() == 200) {
+            return $next($request);
+        } else {
             $request->session()->flush();
-            // pake session yang baru
-            session(['access_token' => $request['access_token']]);
-        }
-
-        // ini kalo emang blm login sama sekali, di session ga ada, ga bawa token sama sekali
-        else {
-            return redirect('login'); //redirect()->away('url ke login gwa')
+            return to_route('auth.login'); //redirect()->away('url ke login gwa')
         }
     }
 }
-
