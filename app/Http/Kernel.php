@@ -57,6 +57,8 @@ class Kernel extends HttpKernel
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,
         'api.auth' => \App\Http\Middleware\APIAuth::class,
+        'api.islecturer' => \App\Http\Middleware\IsLecturer::class,
+        'api.ispbm' => \App\Http\Middleware\IsPBM::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,

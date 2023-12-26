@@ -25,9 +25,12 @@ class APIAuth
 
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $token,
-        ])->get('http://localhost:8080/api/auth/validate');
+        ])->get(config('api.host') . '/api/auth/validate');
+        
+        $data = json_decode($response);
 
         if ($response->status() == 200) {
+            $request->session()->put('user', $data->data);
             return $next($request);
         } else {
             $request->session()->flush();
