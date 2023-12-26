@@ -40,6 +40,7 @@
     <meta property="og:locale" content="en_US">
     <meta property="og:image" content="assets/img-temp/aduik-preview.png">
     <meta property="og:image:secure_url" content="assets/img-temp/aduik-preview.png">
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
 
     <!-- Web Fonts -->
     <link href="{{ asset('assets/css/font.css') }}" rel="stylesheet">
@@ -50,6 +51,8 @@
 
     <!-- Theme Styles -->
     <link rel="stylesheet" href="{{ asset('assets/css/theme.css') }}">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     @yield('stylesheet')
 </head>
 <!-- End Head -->
@@ -60,7 +63,11 @@
     @include('layouts.topbar')
 
     <main class="u-main">
+        @if (isset($isPBM))
+        @include('layouts.sidenav.pbm')
+        @else
         @include('layouts.sidenav.lecturer')
+        @endif
 
         <!-- Content -->
         <div class="u-content">
