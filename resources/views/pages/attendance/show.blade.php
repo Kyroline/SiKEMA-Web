@@ -1,4 +1,4 @@
-@extends('layouts.app', ['title' => 'SiKEMA | Buat presensi', 'parent' => ''])
+@extends('layouts.app', ['title' => 'SiKEMA | Buat presensi', 'parent' => 'presensi'])
 
 @section('stylesheet')
 <link rel="stylesheet" href="{{ asset('assets/css/jquery.dataTables.min.css') }}">
@@ -42,6 +42,7 @@
                 </div>
             </div>
         </div>
+        @if ($status == 2)
         <div class="col-12 mb-3">
             <div class="card">
                 <header class="card-header">
@@ -53,14 +54,36 @@
                 <a class="btn btn-primary btn-sm text-uppercase mb-4 ml-4 mr-4 mr-md-4" href="#" data-toggle="modal" data-target="#qr-modal">Detail</a>
             </div>
         </div>
+        @elseif ($status == 1)
+        <div class="col-12 mb-3">
+            <div class="card">
+                <header class="card-header">
+                    <h3>QR Code</h3>
+                </header>
+                <div class="card-body py-0">
+                    <div class="alert alert-info alert-sm" role="alert">
+                        Aktifkan QR Code melalui aplikasi
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+
     </div>
     <div class="col-lg-7">
         <div class="col-12 mb-3">
             <div class="card">
                 <header class="card-header">
                     <h3>List Mahasiswa</h3>
+                    @if ($status != 3)
+                    <div id="confirm-changes" style="display: none;">
+                        <h5>Terdeteksi perubahan</h5>
+                        <button class="btn btn-sm btn-primary" id="confirm-changes_btn">Konfirmasi</button>
+                    </div>
+                    @endif
                 </header>
                 <div class="card-body py-0">
+                    @isset($students)
                     <table id="dtBasicExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
                         <thead>
                             <tr>
@@ -76,9 +99,19 @@
                                 <td>{{ $student->Name }}</td>
                                 <td>
                                     @if ($student->status == 1)
-                                    <a href=""><span class="badge badge-success">Hadir</span></a>
+                                    <a href="#">
+                                        <span class="badge badge-success">Hadir</span>
+                                    </a>
+                                    @if ($status != 3)
+                                    <input value="{{ $student->Nim }}" class="attendance-cb" type="checkbox" checked>
+                                    @endif
                                     @else
-                                    <a href=""><span class="badge badge-danger">Tidak hadir</span></a>
+                                    <a href="#">
+                                        <span class="badge badge-danger">Tidak hadir</span>
+                                    </a>
+                                    @if ($status != 3)
+                                    <input value="{{ $student->Nim }}" class="attendance-cb" type="checkbox">
+                                    @endif
                                     @endif
                                 </td>
                             </tr>
@@ -92,6 +125,7 @@
                             </tr>
                         </tfoot>
                     </table>
+                    @endisset
                 </div>
             </div>
         </div>
@@ -124,8 +158,91 @@
 @endsection
 
 @section('scripts')
+@if ($status != 3)
+<script>
+    var addedStudent = []
+    var removedStudent = []
+    $("div#confirm-changes").hide();
+    var changeListener = {
+        isChanged: true,
+
+        setChanged: function(newValue) {
+            this.isChanged = newValue;
+            $(document).trigger('attendanceChanged', [newValue]);
+        }
+    };
+
+    $("input.attendance-cb").each(function() {
+        var currentElement = $(this)
+        var defaultState = currentElement.prop("checked");
+
+        currentElement.change(function() {
+            if (currentElement.prop("checked") !== defaultState) {
+                changeListener.setChanged(true)
+                $("div#confirm-changes").show()
+                if (currentElement.prop("checked")) {
+                    addedStudent.push(currentElement.val())
+                } else {
+                    removedStudent.push(currentElement.val())
+                }
+            } else {
+                if (currentElement.prop("checked")) {
+                    var indexOfElementToRemove = removedStudent.indexOf(currentElement.val());
+                    if (indexOfElementToRemove !== -1) {
+                        removedStudent.splice(indexOfElementToRemove, 1);
+                    }
+                } else {
+                    var indexOfElementToRemove = addedStudent.indexOf(currentElement.val());
+                    if (indexOfElementToRemove !== -1) {
+                        addedStudent.splice(indexOfElementToRemove, 1);
+                    }
+                }
+            }
+        })
+    })
+
+    $('button#confirm-changes_btn').click(function() {
+        $.ajax({
+            url: '{{ route("attendance.add_student", $id) }}',
+            type: 'POST',
+            // contentType: 'application/json',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                "added_student": addedStudent,
+                "removed_student": removedStudent
+            },
+            success: function(response) {
+                console.log('Request successful!', response);
+                window.location = "{{ route('attendance.show', $id) }}"
+                // Optionally, handle the response here
+            },
+            error: function(error) {
+                console.error('Error:', error);
+            }
+        });
+    })
+
+    $(document).on('attendanceChanged', function(event, newValue) {
+        console.log('myVariable changed to:', newValue);
+    });
+</script>
+@endif
 <script src="{{ asset('assets/js/jquery.dataTables.min.js')}}"></script>
 <script>
-    let table = new DataTable('#dtBasicExample');
+    // let table = new DataTable('#dtBasicExample');
+    $(document).ready(function() {
+        $('#dtBasicExample').DataTable({
+            "columnDefs": [{
+                "targets": [1], // Replace [0] with the index of the column you want to adjust
+                "render": function(data, type, row) {
+                    // Adjust the length (e.g., 20 characters) based on your requirements
+                    return "<div style='white-space:normal; width:250px;'>" + data + "</div>"
+                    // return '<div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">' + data + '</div>';
+                }
+            }]
+        });
+    });
 </script>
 @endsection

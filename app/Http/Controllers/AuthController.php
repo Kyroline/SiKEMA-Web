@@ -10,7 +10,7 @@ class AuthController extends Controller
     public function login(Request $request) {
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
-        ])->post('http://localhost:8080/api/auth/login', [
+        ])->post(config('api.host') . '/api/auth/login', [
             'nim' => $request->email,
             'password' => $request->password,
         ]);
@@ -22,7 +22,7 @@ class AuthController extends Controller
             // $request->session()->put('user', $data->data->user);
             return to_route('dashboard');
         } else {
-
+            return to_route('auth.login');
         }
     }
 }
