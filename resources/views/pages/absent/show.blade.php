@@ -80,19 +80,16 @@
                 </header>
                 <div class="card-body py-0">
                     @if (isset($excuse))
-                    <form action="{{ route('') }}" method="post">
+                    <form action="{{ route('pbm.excuse.update', $excuse->id) }}" method="post">
                         @csrf
-                        <div class="form-group">
-                            <label for="desc">Deskripsi Alasan</label>
-                            <textarea type="text" class="form-control form-control-sm" id="desc" readonly>{{ $excuse->excuse }}</textarea>
-                        </div>
                         <div class="form-group">
                             <label for="attachment">Attachments</label>
                             <input type="text" class="form-control form-control-sm" id="attachment" value="{{ $excuse->attachment }}" readonly>
+                            <a href="{{ ($excuse_file ?? '') }}">Lihat</a>
                         </div>
                         <div class="form-group">
                             <label for="comment">Komentar</label>
-                            <textarea type="text" class="form-control form-control-sm" id="comment"></textarea>
+                            <textarea name="excuse" type="text" class="form-control form-control-sm" id="comment">{{ $excuse->excuse }}</textarea>
                         </div>
                         <div class="form-group">
                             <label>Status</label>
@@ -105,7 +102,7 @@
                                 <label class="custom-control-label" for="customRadioInline1">Tolak</label>
                             </div>
                             <div class="custom-control custom-radio custom-control-inline">
-                                <input type="radio" id="customRadioInline3" name="status" value="3" class="custom-control-input" {{ $excuse->status == 2 ? 'checked' : ''}}>
+                                <input type="radio" id="customRadioInline3" name="status" value="2" class="custom-control-input" {{ $excuse->status == 2 ? 'checked' : ''}}>
                                 <label class="custom-control-label" for="customRadioInline3">Terima</label>
                             </div>
                         </div>

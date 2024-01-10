@@ -7,8 +7,12 @@ use Illuminate\Support\Facades\Http;
 
 class CourseController extends Controller
 {
-    function get() {
-        $response = Http::get(config('api.host') . '/api/lecturer/1/course');
+    // By Lecturer
+    function get(Request $request) {
+        $user = $request->session()->get('user');
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $request->session()->get('token'),
+        ])->get(config('api.host') . '/api/lecturer/' . $user->lecturer->ID . '/course');
         $courses = json_decode($response)->data;
 
         return view('pages.course.get', compact('courses'));

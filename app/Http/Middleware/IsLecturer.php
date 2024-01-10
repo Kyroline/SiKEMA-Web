@@ -17,9 +17,9 @@ class IsLecturer
     {
         if (!$request->session()->has('user'))
             return to_route('auth.login');
-        $user = json_decode($request->session()->get('user'));
+        $user = $request->session()->get('user');
 
-        if (!$user->status == 1 || empty($user->lecturer)) { // 1 is for lecturer, whereas 2 is for PBM, and 0 for student
+        if ($user->type != 1 || empty($user->lecturer)) { // 1 is for lecturer, whereas 2 is for PBM, and 0 for student
             $request->session()->flush();
             abort(403);
         }

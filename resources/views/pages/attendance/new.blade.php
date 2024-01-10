@@ -25,21 +25,20 @@
                     <form action="{{ route('attendance.create') }}" method="post">
                         @csrf
                         <div class="form-group">
-                            <label for="matakuliah">Matakuliah</label>
-                            <select class="form-control form-control-sm" id="matakuliah" name="id_course">
-                                <option></option>
-                                @foreach ($courses as $course)
-                                <option value="{{ $course['id'] }}">{{ $course['name'] }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="form-group">
                             <label for="kelas">Kelas</label>
                             <select class="form-control form-control-sm" id="kelas" name="id_class">
                                 <option></option>
                                 @foreach ($classes as $class)
                                 <option value="{{ $class['id'] }}">{{ $class['name'] }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="matakuliah">Mata Kuliah</label>
+                            <select class="form-control form-control-sm" id="matakuliah" name="id_course">
+                                <option></option>
+                                @foreach ($courses as $course)
+                                <option value="{{ $course['id'] }}">{{ $course['name'] }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -52,7 +51,7 @@
                         </div>
 
                         <div class="form-group">
-                            <input class="btn btn-sm btn-primary" id="confirm-changes_btn" type="submit" value="Buat"/>
+                            <input class="btn btn-sm btn-primary" id="confirm-changes_btn" type="submit" value="Buat" />
                         </div>
                     </form>
                 </div>
@@ -60,4 +59,9 @@
         </div>
     </div>
 </div>
+@endsection
+@section('scripts')
+<script>
+
+</script>
 @endsection

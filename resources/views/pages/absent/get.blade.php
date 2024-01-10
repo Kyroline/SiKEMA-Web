@@ -50,9 +50,10 @@
                                     <!-- <button type="button" class="btn btn-warning">Warning</button> -->
                                     <a href="{{ route('pbm.absent.show', $absent->id) }}">
                                         <span class="badge badge-warning">
-                                            <span class="material-symbols-outlined">
+                                            Detail
+                                            <!-- <span class="material-symbols-outlined">
                                                 edit_square
-                                            </span>
+                                            </span> -->
                                         </span>
                                     </a>
                                 </td>

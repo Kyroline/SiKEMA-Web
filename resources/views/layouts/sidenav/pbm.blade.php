@@ -34,7 +34,7 @@
                     <ul id="presensiSubmenu" class="u-sidebar-nav-menu u-sidebar-nav-menu--second-level" style="display: none;">
 
                         <li class="u-sidebar-nav-menu__item">
-                            <a class="u-sidebar-nav-menu__link {{ (!empty($child) && $child == 'buat') ? 'active' : ''}}" href="{{ route('attendance.new') }}">
+                            <a class="u-sidebar-nav-menu__link {{ (!empty($child) && $child == 'ketidakhadiran') ? 'active' : ''}}" href="{{ route('pbm.absent.get') }}">
                                 <!-- <span class="ti-plus u-sidebar-nav-menu__item-icon"></span> -->
                                 <span class="material-symbols-outlined u-sidebar-nav-menu__item-icon">
                                     person_remove
@@ -55,8 +55,8 @@
                     </ul>
                 </li>
 
-                <li class="u-sidebar-nav-menu__item {{ $parent == 'kursus' ? 'u-sidebar-nav--opened' : '' }}">
-                    <a class="u-sidebar-nav-menu__link" href="{{ route('course.get') }}">
+                <li class="u-sidebar-nav-menu__item {{ $parent == 'mahasiswa' ? 'u-sidebar-nav--opened' : '' }}">
+                    <a class="u-sidebar-nav-menu__link" href="{{ route('pbm.student.get') }}">
                         <!-- <span class="ti-panel u-sidebar-nav-menu__item-icon"></span> -->
                         <span class="material-symbols-outlined u-sidebar-nav-menu__item-icon">
                             school
@@ -78,7 +78,7 @@
                 </li>
 
                 <li class="u-sidebar-nav-menu__item">
-                    <a class="u-sidebar-nav-menu__link" href="https://htmlstream.com/templates/awesome-dashboard-ui-kit/" target="_blank">
+                    <a class="u-sidebar-nav-menu__link" href="{{ route('auth.logout') }}">
                         <!-- <span class="ti-power-off u-sidebar-nav-menu__item-icon"></span> -->
                         <span class="material-symbols-outlined u-sidebar-nav-menu__item-icon">
                             logout

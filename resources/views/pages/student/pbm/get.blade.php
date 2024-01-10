@@ -1,4 +1,4 @@
-@extends('layouts.app', ['title' => 'SiKEMA | Buat presensi', 'parent' => '', 'isPBM' => true])
+@extends('layouts.app', ['title' => 'SiKEMA | Buat presensi', 'parent' => 'mahasiswa', 'isPBM' => true])
 
 @section('stylesheet')
 <link rel="stylesheet" href="{{ asset('assets/css/jquery.dataTables.min.css') }}">

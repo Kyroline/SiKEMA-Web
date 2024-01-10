@@ -51,15 +51,15 @@
                                 <td>
                                     <a href="{{route('attendance.show', ['id' => $event->id])}}">
                                         @switch($event->status)
-                                        @case(1)
+                                        @case(0)
                                         <span class="badge badge-success">Open</span>
                                         @break
 
-                                        @case(2)
+                                        @case(1)
                                         <span class="badge badge-info">Open / QR</span>
                                         @break
 
-                                        @case(3)
+                                        @case(2)
                                         <span class="badge badge-primary">Closed</span>
                                         @break
 

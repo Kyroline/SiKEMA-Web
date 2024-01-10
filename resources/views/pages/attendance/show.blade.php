@@ -26,35 +26,44 @@
                 <header class="card-header">
                     <h3>Detail</h3>
                 </header>
-                <div class="card-body py-0">
-                    <div class="form-group">
-                        <label for="formGroupExampleInput">Matakuliah</label>
-                        <input type="text" class="form-control form-control-sm" id="formGroupExampleInput" placeholder="{{ $course_name }}" readonly>
+                <form method="POST" action="{{ route('attendance.finalize', $id) }}">
+                    @method('patch')
+                    @csrf
+                    <div class="card-body py-0">
+                        <div class="form-group">
+                            <label for="formGroupExampleInput">Matakuliah</label>
+                            <input type="text" class="form-control form-control-sm" id="formGroupExampleInput" placeholder="{{ $course_name }}" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="formGroupExampleInput">Kelas</label>
+                            <input type="text" class="form-control form-control-sm" id="formGroupExampleInput" placeholder="{{ $class_name }}" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="formGroupExampleInput">Pertemuan</label>
+                            <input type="text" class="form-control form-control-sm" id="formGroupExampleInput" placeholder="{{ $meet_n }}" readonly>
+                        </div>
+                        @if ($status != 2)
+                        <div class="form-group">
+                            <input type="submit" class="btn btn-primary btn-sm" id="formGroupExampleInput" value="Finalize">
+                        </div>
+                        @endif
                     </div>
-                    <div class="form-group">
-                        <label for="formGroupExampleInput">Kelas</label>
-                        <input type="text" class="form-control form-control-sm" id="formGroupExampleInput" placeholder="{{ $class_name }}" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label for="formGroupExampleInput">Pertemuan</label>
-                        <input type="text" class="form-control form-control-sm" id="formGroupExampleInput" placeholder="{{ $meet_n }}" readonly>
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
-        @if ($status == 2)
+        @if ($status == 1)
         <div class="col-12 mb-3">
             <div class="card">
                 <header class="card-header">
                     <h3>QR Code</h3>
                 </header>
                 <div class="card-body py-0">
-                    <img class="img-fluid" src="https://cdn.britannica.com/17/155017-050-9AC96FC8/Example-QR-code.jpg" alt="">
+                    <div id="qrcode-sm"></div>
                 </div>
                 <a class="btn btn-primary btn-sm text-uppercase mb-4 ml-4 mr-4 mr-md-4" href="#" data-toggle="modal" data-target="#qr-modal">Detail</a>
             </div>
         </div>
-        @elseif ($status == 1)
+        @elseif ($status == 0)
         <div class="col-12 mb-3">
             <div class="card">
                 <header class="card-header">
@@ -75,7 +84,7 @@
             <div class="card">
                 <header class="card-header">
                     <h3>List Mahasiswa</h3>
-                    @if ($status != 3)
+                    @if ($status != 2)
                     <div id="confirm-changes" style="display: none;">
                         <h5>Terdeteksi perubahan</h5>
                         <button class="btn btn-sm btn-primary" id="confirm-changes_btn">Konfirmasi</button>
@@ -102,14 +111,14 @@
                                     <a href="#">
                                         <span class="badge badge-success">Hadir</span>
                                     </a>
-                                    @if ($status != 3)
+                                    @if ($status != 2)
                                     <input value="{{ $student->Nim }}" class="attendance-cb" type="checkbox" checked>
                                     @endif
                                     @else
                                     <a href="#">
                                         <span class="badge badge-danger">Tidak hadir</span>
                                     </a>
-                                    @if ($status != 3)
+                                    @if ($status != 2)
                                     <input value="{{ $student->Nim }}" class="attendance-cb" type="checkbox">
                                     @endif
                                     @endif
@@ -145,6 +154,7 @@
                 </button>
             </div>
             <div class="modal-body">
+                <div id="qrcode"></div>
                 <img class="img-fluid" src="https://cdn.britannica.com/17/155017-050-9AC96FC8/Example-QR-code.jpg" alt="">
             </div>
             <div class="modal-footer">
@@ -229,7 +239,12 @@
     });
 </script>
 @endif
-<script src="{{ asset('assets/js/jquery.dataTables.min.js')}}"></script>
+<script src="{{ asset('assets/js/qrcode.min.js') }}"></script>
+<script type="text/javascript">
+    new QRCode(document.getElementById("qrcode-sm"), "http://jindo.dev.naver.com/collie");
+    new QRCode(document.getElementById("qrcode"), "http://jindo.dev.naver.com/collie");
+</script>
+<script src="{{ asset('assets/js/jquery.dataTables.min.js') }}"></script>
 <script>
     // let table = new DataTable('#dtBasicExample');
     $(document).ready(function() {

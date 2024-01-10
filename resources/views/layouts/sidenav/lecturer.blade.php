@@ -78,7 +78,7 @@
                 </li>
 
                 <li class="u-sidebar-nav-menu__item">
-                    <a class="u-sidebar-nav-menu__link" href="https://htmlstream.com/templates/awesome-dashboard-ui-kit/" target="_blank">
+                    <a class="u-sidebar-nav-menu__link" href="{{ route('auth.logout') }}" target="_blank">
                         <!-- <span class="ti-power-off u-sidebar-nav-menu__item-icon"></span> -->
                         <span class="material-symbols-outlined u-sidebar-nav-menu__item-icon">
                             logout

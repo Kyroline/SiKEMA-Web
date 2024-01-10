@@ -30,9 +30,12 @@ function remove_duplicateKeys($key, $data)
 class AttendanceController extends Controller
 {
 
-    public function new()
+    public function new(Request $request)
     {
-        $response = Http::get(config('api.host') . '/api/lecturer/1/course');
+        $user = $request->session()->get('user');
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $request->session()->get('token'),
+        ])->get(config('api.host') . '/api/lecturer/' . $user->lecturer->ID . '/course');
 
         $enrollments = json_decode($response)->data;
         $courses = array();
@@ -56,7 +59,9 @@ class AttendanceController extends Controller
         if ($request->has('class_id'))
             $class_id = $request->input('class_id');
         $user = $request->session()->get('user');
-        $response = Http::get(config('api.host') . '/api/lecturer/' . $user->student->ID . '/event?course_id=' . $course_id . '&class_id=' . $class_id);
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $request->session()->get('token'),
+        ])->get(config('api.host') . '/api/lecturer/' . $user->lecturer->ID . '/event?course_id=' . $course_id . '&class_id=' . $class_id);
 
         $events = json_decode($response)->data;
         foreach ($events as &$event) {
@@ -73,8 +78,10 @@ class AttendanceController extends Controller
 
     public function show(Request $request, string $id)
     {
-        // $response = Http::get(config('api.host') . "/api/class/1");
-        $response = Http::get(config('api.host') . "/api/lecturer/1/event/" . $id);
+        $user = $request->session()->get('user');
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $request->session()->get('token'),
+        ])->get(config('api.host') . "/api/lecturer/" . $user->lecturer->ID . "/event/" . $id);
         $data = json_decode($response);
 
         $course_name = $data->data->course->name;
@@ -89,7 +96,9 @@ class AttendanceController extends Controller
             }
         }
 
-        $response = Http::get(config('api.host') . "/api/class/" . $data->data->class->id);
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $request->session()->get('token'),
+        ])->get(config('api.host') . "/api/class/" . $data->data->class->id);
         $data = json_decode($response);
         $students = $data->data->students;
 
@@ -108,14 +117,16 @@ class AttendanceController extends Controller
 
     public function create(Request $request)
     {
+        $user = $request->session()->get('user');
         $response = Http::withHeaders([
             "Content-Type" => "application/json",
-            "Authorization" => "Bearer "
-        ])->post(config('api.host') . "/api/lecturer/1/event/", [
-            "lecturer_id" => 1,
+            "Authorization" => "Bearer " . $request->session()->get('token')
+        ])->post(config('api.host') . '/api/lecturer/' . $user->lecturer->ID . '/event', [
+            "lecturer_id" => $user->lecturer->ID,
             "class_id" => (int)$request->id_class,
             "course_id" => (int)$request->id_course,
             "meet" => (int)$request->meet,
+            'status' => 0,
         ]);
 
         $data = json_decode($response)->data;
@@ -124,10 +135,11 @@ class AttendanceController extends Controller
 
     public function add_student(Request $request, string $id)
     {
+        $user = $request->session()->get('user');
         $response = Http::withHeaders([
             "Content-Type" => "application/json",
-            "Authorization" => "Bearer "
-        ])->post(config('api.host') . "/api/lecturer/1/event/" . $id . "/student", [
+            "Authorization" => "Bearer " . $request->session()->get('token')
+        ])->post(config('api.host') . "/api/lecturer/" . $user->lecturer->ID . "/event/" . $id . "/student", [
             "student_id" => $request->added_student
         ]);
 
@@ -136,10 +148,24 @@ class AttendanceController extends Controller
 
         $response = Http::withHeaders([
             "Content-Type" => "application/json",
-            "Authorization" => "Bearer "
+            "Authorization" => "Bearer " . $request->session()->get('token')
         ])->delete(config('api.host') . "/api/lecturer/1/event/" . $id . "/student", [
             "student_id" => $request->removed_student
         ]);
+
+        if ($response->status() <= 400)
+            return redirect()->route('attendance.show', $id);
+
+        return redirect()->route('attendance.show', $id);
+    }
+
+    public function finalize(Request $request, string $id)
+    {
+        $user = $request->session()->get('user');
+        $response = Http::withHeaders([
+            "Content-Type" => "application/json",
+            "Authorization" => "Bearer " . $request->session()->get('token')
+        ])->patch(config('api.host') . "/api/lecturer/" . $user->lecturer->ID . "/event/" . $id . "/finalize");
 
         if ($response->status() <= 400)
             return route('attendance.show', $id);
