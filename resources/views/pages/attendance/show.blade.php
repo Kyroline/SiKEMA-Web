@@ -155,7 +155,7 @@
             </div>
             <div class="modal-body">
                 <div id="qrcode"></div>
-                <img class="img-fluid" src="https://cdn.britannica.com/17/155017-050-9AC96FC8/Example-QR-code.jpg" alt="">
+                <!-- <img class="img-fluid" src="https://cdn.britannica.com/17/155017-050-9AC96FC8/Example-QR-code.jpg" alt=""> -->
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

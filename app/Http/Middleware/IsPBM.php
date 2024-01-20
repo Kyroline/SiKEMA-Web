@@ -19,7 +19,7 @@ class IsPBM
             return to_route('auth.login');
         $user = $request->session()->get('user');
 
-        if (!$user->type == 2 || empty($user->pbm)) { // 2 is for lecturer, whereas 2 is for PBM, and 0 for student
+        if ($user->type != 2 || empty($user->pbm)) { // 2 is for lecturer, whereas 2 is for PBM, and 0 for student
             $request->session()->flush();
             abort(403);
         }

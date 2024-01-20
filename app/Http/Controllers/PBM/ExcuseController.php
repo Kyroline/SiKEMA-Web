@@ -19,4 +19,13 @@ class ExcuseController extends Controller
             "status" => intval($request->status),
         ]);
     }
+
+    function get(Request $request)
+    {
+        $user = $request->session()->get('user');
+        $response = Http::withHeaders([
+            "Content-Type" => "application/json",
+            "Authorization" => "Bearer " . $request->session()->get('token')
+        ])->get(config('api.host') . "/api/pbm/excuse");
+    }
 }
